@@ -1,8 +1,17 @@
 
 sum = 0
 
-def isSymbol(ch):
-    return not ch.isdecimal() and ch != '.'
+def isStar(ch):
+    return ch == '*'
+
+def getStart(e, r, c):
+    return {(max(0, r-1), max(0, c-1)), (min(len(eng)-1, r+1), max(0, c-1)), (r, max(0, c-1))}
+
+def getNEnd(e, r, c):
+    return {(max(0, r-1), c), (min(len(eng)-1, r+1), c)}
+
+def getEnd(e, r, c):
+    return {(max(0, r-1), c), (min(len(eng)-1, r+1), c), (r, min(len(e[r])-1, c))}
 
 fp = open(
         "input.txt",
@@ -10,6 +19,7 @@ fp = open(
         )
 
 eng = []
+map = {}
 
 for line in fp:
     line = line.strip()
@@ -20,35 +30,49 @@ fp.close()
 for r, row in enumerate(eng):
     isNum = False
     start = -1
-    valid = False
+    ccs = []
     for c, ch in enumerate(row):
-        if ch.isdecimal() and not isNum:
+        if ch.isdigit() and not isNum:
             start = c
             isNum = True
-            if (isSymbol(eng[max(0, r-1)][max(0, c-1)])             # check beginning
-                or isSymbol(eng[min(len(eng)-1, r+1)][max(0, c-1)]) 
-                or isSymbol(eng[r][max(0, c-1)])):
-                valid = True
+            for coord in getStart(eng, r, c):
+                if isStar(eng[coord[0]][coord[1]]):
+                    if coord not in map:
+                        map[coord] = []
+                    if coord not in ccs: ccs.append(coord)
         if isNum:
-            if ch.isdecimal():
-                if (isSymbol(eng[max(0, r-1)][c])                   # check beginning
-                    or isSymbol(eng[min(len(eng)-1, r+1)][c]) 
-                    or isSymbol(eng[r][c])):
-                    valid = True
+            if ch.isdigit():
+                for coord in getNEnd(eng, r, c):
+                    if isStar(eng[coord[0]][coord[1]]):
+                        if coord not in map:
+                            map[coord] = []
+                        if coord not in ccs: ccs.append(coord)
             else:
-                isNum = False                                       # check end
-                if (isSymbol(eng[max(0, r-1)][c])                   # check beginning
-                    or isSymbol(eng[min(len(eng)-1, r+1)][c]) 
-                    or isSymbol(eng[r][c])):
-                    valid = True
-                if valid:
-                    sum += int(row[start:c])
-                valid = False
+                for coord in getEnd(eng, r, c):
+                    if isStar(eng[coord[0]][coord[1]]):
+                        if coord not in map:
+                            map[coord] = []
+                        if coord not in ccs: ccs.append(coord)
+                if len(ccs) > 0:
+                    for cc in ccs:
+                        map[cc].append(int(row[start:c]))
+                isNum = False
+                ccs = []
     if isNum:
-        if(isSymbol(eng[max(0, r-1)][len(eng[0])-1])
-           or isSymbol(eng[min(len(eng)-1, r+1)][len(eng[0])-1])):
-            valid = True
-        if valid:
-            sum += int(row[start:])
+        for coord in getEnd(eng, r, len(eng[r])-1):
+            if isStar(eng[coord[0]][coord[1]]):
+                if coord not in map:
+                    map[coord] = []
+                if coord not in ccs: ccs.append(coord)
+                
+        if len(ccs) > 0:
+            for cc in ccs:
+                map[cc].append(int(row[start:c]))
+
+print(map)
+
+for key in map:
+    if len(map[key]) == 2:
+        sum += map[key][0] * map[key][1]
 
 print(f'sum: {sum}')
