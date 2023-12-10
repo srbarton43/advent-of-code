@@ -1,7 +1,8 @@
 input = "input.txt"
 
 import pprint as pp
-import re
+import numpy as np
+import math
 import time
 
 map = {}
@@ -18,12 +19,37 @@ with open(input, "r") as f:
 print(instr)
 pp.pprint(map)
 
-starting = [ x for x in list(map.keys()) if re.match("[1-9A-Z]{2}A", x)]
+starting = [ x for x in list(map.keys()) if x[-1] == 'A']
 print(starting)
 p = 0
 steps = 0
 next = starting
 yes = True
+ss = []
+def findSteps(start):
+    steps = 0
+    p = 0
+    cur = start
+    while True:
+        print(cur)
+        if cur[-1] == 'Z':
+            break
+        if p == len(instr): p = 0
+        move = instr[p]
+        match move:
+            case 'R':
+                cur = map[cur][1]
+            case 'L':
+                cur = map[cur][0]
+        steps+=1
+        p+=1
+    return steps
+for s in starting:
+    ss.append(findSteps(s))
+
+print(ss)
+print(math.lcm(*ss))
+exit()
 while yes:
     print(steps)
     prev = next
