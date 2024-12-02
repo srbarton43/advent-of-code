@@ -1,5 +1,5 @@
-# Advent of Code 2023
+# Advent of Code
 
-Here are my solutions for advent of code 2023...
+* 2023
+* 2024
 
-I plan to write solutions in whatever language I feel like, and I may use this opportunity to lean Rust.

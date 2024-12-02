@@ -1,0 +1,122 @@
+input = "input.txt"
+
+import numpy as np
+
+grid = []
+with open(input, "r") as f:
+    for line in f:
+        line = line.strip()
+        grid.append([c for c in line])
+
+grid = np.asarray(grid)
+print(grid)
+
+# find start
+for r, row in enumerate(grid):
+    for c, sq in enumerate(row):
+        if sq == 'S':
+            start = (r, c)
+            break
+    else:
+        continue
+    break
+
+print(start)
+start1 = start2 = None
+dirs = [(-1, 0), (0, 1), (1, 0), (0, -1)]
+r, c = start
+for dr, dc in dirs:
+    print(grid[r+dr, c+dc])
+    if dr is 0:
+        match dc:
+            case 1: # right
+                print("foo")
+                if grid[(r, c+dc)] in ['7', 'J', '-']:
+                    if not start1:
+                        start1 = (r, c+dc)
+                    else:
+                        start2 = (r, c+dc)
+                        break
+            case -1:
+                if grid[(r, c+dc)] in ['F', 'L', '-']:
+                    if not start1:
+                        start1 = (r, c+dc)
+                    else:
+                        start2 = (r, c+dc)
+                        break
+    else:
+        match dr:
+            case 1: # down
+                if grid[r+dr, c] in ['L', 'J', '|']:
+                    if not start1:
+                        start1 = (r+dr, c)
+                    else:
+                        start2 = (r+dr, c)
+                        break
+            case -1:
+                if grid[r+dr, c] in ['F', '7', '|']:
+                    if not start1:
+                        start1 = (r+dr, c)
+                    else:
+                        start2 = (r+dr, c)
+                        break
+          
+print(start1, start2)
+
+def getNext(grid, cur, prev):
+    pr, pc = prev
+    cr, cc = cur
+    print(grid[cur])
+    sq = grid[cur]
+    grid[cur] = '*'
+    match sq:
+        case '|':
+            if pr > cr:
+                return (cr-1, cc)
+            else:
+                return (cr+1, cc)
+        case '-':
+            if pc > cc:
+                return (cr, cc-1)
+            else:
+                return (cr, cc+1)
+        case 'F':
+            if pc-1 == cc: # to right
+                return (cr+1, cc)
+            else:
+                return(cr, cc+1)
+        case '7':
+            if pc+1 == cc:
+                return (cr+1, cc)
+            else:
+                return (cr, cc-1)
+        case 'J':
+            if pr+1 == cr:
+                return (cr, cc-1)
+            else:
+                return (cr-1, cc)
+        case 'L':
+            if pr+1 == cr:
+                return (cr, cc+1)
+            else:
+                return (cr-1, cc)
+                
+    return None
+
+cur1 = start1
+cur2 = start2
+prev1 = prev2 = start
+
+steps = 1
+while cur1 != cur2 and grid[cur1] != '*':
+    temp = getNext(grid, cur1, prev1)
+    prev1 = cur1
+    cur1 = temp
+    temp = getNext(grid, cur2, prev2)
+    prev2 = cur2
+    cur2 = temp
+    steps += 1
+
+print(grid)
+print(cur1, cur2)
+print(steps)

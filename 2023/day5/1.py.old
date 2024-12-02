@@ -1,0 +1,70 @@
+file = "input.txt"
+
+with open(file, 'r') as fp:
+    lines = fp.readlines();
+
+lines = [x.strip() for x in lines]
+
+print(lines)
+
+seeds = [int(x) for x in lines[0].split(':')[1].strip().split(' ')]
+
+# seed2soil
+def getMap(mapname):
+    first = lines.index(mapname)+1
+    try:
+        last = lines.index('', lines.index(mapname))
+    except Exception:
+        last = len(lines)
+    
+    ranges = []
+    for line in lines[first:last]:
+        print(line)
+        dst, src, l = [int(x) for x in line.split(' ')]
+        ranges.append(((src, src+l-1), dst))
+    return ranges
+
+s2s = getMap("seed-to-soil map:")
+print(s2s)
+s2f = getMap("soil-to-fertilizer map:")
+print(s2f)
+f2w = getMap("fertilizer-to-water map:")
+print(f2w)
+w2l = getMap("water-to-light map:")
+print(w2l)
+l2t = getMap("light-to-temperature map:")
+print(l2t)
+t2h = getMap("temperature-to-humidity map:")
+print(t2h)
+h2l = getMap("humidity-to-location map:")
+print(f'h2l {h2l}')
+
+
+def getNext(map, cur):
+    for (mn, mx), dst in map:
+        # print(f'({mn}, {mx}), {dst}')
+        if mn <= cur <= mx:
+            next = dst+(cur-mn)
+            # print(f'next: {next}')
+            return next
+    return cur
+
+locs = []
+for seed in seeds:
+    print(seed)
+    temp = getNext(s2s, seed)
+    # print(temp)
+    temp = getNext(s2f, temp)
+    # print(temp)
+    temp = getNext(f2w, temp)
+    # print(temp)
+    temp = getNext(w2l, temp)
+    # print(temp)
+    temp = getNext(l2t, temp)
+    # print(temp)
+    temp = getNext(t2h, temp)
+    # print(temp)
+    temp = getNext(h2l, temp)
+    print(f'final: {temp}')
+    locs.append(temp)
+print(f'min: {min(locs)}')

@@ -1,5 +1,5 @@
 input = "sample.txt"
-input = "input.txt"
+#input = "input.txt"
 
 from itertools import chain, combinations
 
@@ -12,17 +12,24 @@ def main():
     print(f'output: {sum}')
 
 def doStuff(line):
-    print(line)
+    #print(line)
     arrs = 0
     recs = [int(x) for x in line.split()[1].split(',')]
     raw = line.split()[0]
+    newRaw = ""
+    for i in range(5):
+        newRaw += raw+'?'
+    raw = newRaw[:-1]
     print(raw)
-    print(recs)
+    recs = 5* recs
+    
+    #print(raw)
+    #print(recs)
     qs = raw.count("?")
     tries = getBruteForce(raw, qs)
     for s in tries:
         if works(s, recs): arrs += 1
-    print(arrs)
+    #print(arrs)
     return arrs
 
 def getBruteForce(raw, qCount):
@@ -38,7 +45,7 @@ def getBruteForce(raw, qCount):
             else:
                 new.append(ch)
         tries.append(''.join(new))
-    #print(tries)
+    ##print(tries)
     return tries
 
 def powerset(iterable):
@@ -47,7 +54,7 @@ def powerset(iterable):
 
 def works(s, recs):
     i = 0
-    print(s, recs)
+    #print(s, recs)
     for rec in recs:
         val = rec
         while i < len(s):
@@ -66,7 +73,7 @@ def works(s, recs):
     while i < len(s):
         if s[i] == '#': return False
         i+=1
-    print("works!")
+    #print("works!")
     return True
                     
                     

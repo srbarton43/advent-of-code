@@ -1,0 +1,52 @@
+file = "sample.txt"
+#file = "input.txt"
+
+def main():
+    with open(file, 'r') as fp:
+        lines = [l.strip() for l in fp.readlines()]
+    seeds = [int(x) for x in lines[0].split()[1:]]
+    print(seeds)
+    maps = readMaps(lines[2:])
+    print(maps)
+    calcMin(seeds, maps)
+    print(f'n maps: {len(maps)}')
+
+def readMaps(lines):
+    maps = []
+    for line in lines:
+        print(line)
+        if "map" in line:
+            maps.append(dict())
+        elif line != '':
+            print(line)
+            dst, src, l = [int(x) for x in line.split()]
+            maps[-1][(dst, dst+l)] = src
+    return maps
+
+def calcMin(seeds, maps):
+    loc = 0
+    while True:
+        if loc >= 100: break
+        seed = lookupRev(loc, maps)
+        print(seed)
+        if seed in seeds: break
+        loc += 1
+    print(f'min loc: {loc}')
+
+def lookupRev(location, maps):
+    cur = location
+    print(f'location: {location}')
+    for map in reversed(maps):
+        for destRange in map:
+            mi, mx = destRange  # [mi,mx)
+            src = map[destRange]
+            if cur >= mi and cur < mx:
+                cur = src + (cur - mi)
+                break
+        else:
+            cur = cur
+        print(f'intermediate: {cur}')
+    return cur
+
+if __name__ == "__main__":
+    main()
