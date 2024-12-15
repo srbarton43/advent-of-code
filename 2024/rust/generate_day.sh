@@ -28,8 +28,8 @@ main() {
     exit 2
   fi
   # if no error, write input file to day_0N directory
-  echo "Writing input file to $dirname/input.txt"$
-  cat "$tmpfile" > "input.txt"
+  echo "Writing input file to $dirname/input.txt"
+  cat "$tmpfile" > "$dirname/input.txt"
   rm "$tmpfile"
 }
 
