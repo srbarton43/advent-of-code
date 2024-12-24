@@ -12,9 +12,6 @@ main() {
     exit 1
   fi
 
-  # generate the directory for the new day
-  cargo generate --path ./daily_template --name $dirname
-
   # read input file to tmpfile for error handling
   local tmpfile; tmpfile=$(mktemp /tmp/input_body.XXXXXX)
   # read http_response and http status_code
@@ -28,6 +25,10 @@ main() {
     exit 2
   fi
   # if no error, write input file to day_0N directory
+  
+  # generate the directory for the new day
+  cargo generate --path ./daily_template --name $dirname
+
   echo "Writing input file to $dirname/input.txt"
   cat "$tmpfile" > "$dirname/input.txt"
   rm "$tmpfile"
